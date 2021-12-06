@@ -14,8 +14,10 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		name := r.FormValue("name")
 		address := r.FormValue("address")
+		w.Header().Set("Content-Type", "text/html")
 		fmt.Fprintf(w, "Name = %s\n", name)
 		fmt.Fprintf(w, "Address = %s\n", address)
+		return
 	}
 
 	http.ServeFile(w, r, "form.html")
