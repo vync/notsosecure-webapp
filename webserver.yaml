@@ -1,0 +1,57 @@
+#The notsosecure-webserver name should be templated using a kustomize patch or helm values.yaml which should take the input value from the common.sh defined bash variable "alb_name" adequately refactored.
+---
+apiVersion: extensions/v1
+kind: Ingress
+metadata:
+  name: "notsosecure-webserver-ingress"
+  annotations:
+    kubernetes.io/ingress.class: alb
+  labels:
+    app: "notsosecure-webserver"
+spec:
+  rules:
+    - host: notsosecure-webserver.example.com
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: notsosecure-webserver-service
+              port:
+                number: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "notsosecure-webserver-service"
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+  type: LoadBalancer 
+  selector:
+    app: notsosecure-webserver 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "notsosecure-webserver-deployment"
+  labels:
+    app: "notsosecure-webserver"
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      app: notsosecure-webserver 
+  template:
+    metadata:
+      labels:
+        app: notsosecure-webserver 
+    spec:
+      containers:
+      - name: notsosecure-webserver 
+        image: notsosecure-webserver 
+        ports:
+        - containerPort: 8080
