@@ -22,7 +22,7 @@ pipeline{
 
         stage('kubectl apply') {
             steps {
-                sh("kubectl --kubeconfig $HOME/.kube/<path_to_eks_cluster_kubeconfig> apply -f webserver.yaml")
+                sh './kubectl-apply.sh'
             }
         }
     }
