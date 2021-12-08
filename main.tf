@@ -88,9 +88,21 @@ resource "aws_wafv2_web_acl" "waf_acl" {
   }
 }
 
+data "aws_lb" "alb" {
+  name = var.alb_name
+}
+
 resource "aws_wafv2_web_acl_association" "webAclAssociation" {
-  
+  resource_arn = aws_lb.alb.arn
+  web_acl_arn = aws_wafv2_web_acl.waf_acl.arn
 }
 
 resource "aws_wafv2_web_acl_logging_configuration" "webAclLoggingConfig" {
+  log_destination_configs = [aws_kinesis_firehose_delivery_stream.waf_stream.arn]
+  resource_arn = aws_wafv2_web_acl.waf_acl.arn
+}
+
+#Assumption: The firehose delivery stream is created by a different tf configuration
+data "aws_kinesis_firehose_delivery_stream" "waf_stream" {
+  name = var.waf_stream_name
 }
