@@ -7,10 +7,22 @@ pipeline{
                 checkout scm
             }
         }
+        
+        stage('build image') {
+            steps {
+                sh './build-image.sh'
+            }
+        }
+
+        stage('kubectl apply') {
+            steps {
+                sh './kubectl-apply.sh'
+            }
+        }
 
         stage('Terraform plan') {
             steps {
-               sh './terraform-plan.sh'
+                sh './terraform-plan.sh'
             }
         }
 
@@ -20,10 +32,5 @@ pipeline{
             }
         }
 
-        stage('kubectl apply') {
-            steps {
-                sh './kubectl-apply.sh'
-            }
-        }
     }
 }
